@@ -7,6 +7,7 @@ import { helpText, parseArgs } from './args.js';
 import { discoverConfigPath, loadConfig, resolveSettings } from './config.js';
 import { mapConcurrent, runHost } from './runner.js';
 import { renderFleetTable } from './table.js';
+import { renderFleetGraph } from './graph.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const packageJson = JSON.parse(readFileSync(resolve(here, '..', 'package.json'), 'utf8'));
@@ -62,7 +63,11 @@ export async function runCli(argv, dependencies = {}) {
   if (settings.json) {
     process.stdout.write(`${JSON.stringify(fleet, null, 2)}\n`);
   } else {
-    process.stdout.write(`${renderFleetTable(fleet, settings)}\n`);
+    const sections = [renderFleetTable(fleet, settings)];
+    if (settings.graph) {
+      sections.push(renderFleetGraph(fleet, settings));
+    }
+    process.stdout.write(`${sections.join('\n\n')}\n`);
   }
   return settings.strict && successful.length !== results.length ? 1 : 0;
 }

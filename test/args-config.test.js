@@ -49,6 +49,19 @@ test('rejects an unknown grouping', () => {
   );
 });
 
+test('configures token and cost graphs', () => {
+  const tokens = resolveSettings(parseArgs(['--graph']).options, {}, defaults);
+  assert.equal(tokens.graph, true);
+  assert.equal(tokens.graphMetric, 'tokens');
+
+  const cost = resolveSettings(parseArgs(['--graph', '--graph-metric', 'cost']).options, {}, defaults);
+  assert.equal(cost.graphMetric, 'cost');
+  assert.throws(
+    () => resolveSettings(parseArgs(['--graph-metric', 'cost', '--no-cost']).options, {}, defaults),
+    /cannot be combined with --no-cost/,
+  );
+});
+
 test('rejects SSH option and shell injection', () => {
   assert.throws(() => validateSshTarget('-oProxyCommand=bad'), /Invalid SSH target/);
   assert.throws(() => validateSshTarget('host;touch /tmp/pwned'), /Invalid SSH target/);

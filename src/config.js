@@ -143,6 +143,14 @@ export function resolveSettings(parsedOptions, config, defaults) {
   if (!['agent', 'device', 'none'].includes(groupBy)) {
     throw new Error(`group-by must be agent, device, or none (received '${groupBy}')`);
   }
+  const graphMetric = parsedOptions.graphMetric ?? config.graphMetric ?? 'tokens';
+  if (!['tokens', 'cost'].includes(graphMetric)) {
+    throw new Error(`graph-metric must be tokens or cost (received '${graphMetric}')`);
+  }
+  const noCost = parsedOptions.noCost ?? config.noCost ?? false;
+  if (graphMetric === 'cost' && noCost) {
+    throw new Error('graph-metric cost cannot be combined with --no-cost');
+  }
 
   return {
     ccusageVersion: parsedOptions.ccusageVersion ?? config.ccusageVersion ?? defaults.ccusageVersion,
@@ -150,9 +158,11 @@ export function resolveSettings(parsedOptions, config, defaults) {
     debug: parsedOptions.debug ?? false,
     dryRun: parsedOptions.dryRun ?? false,
     groupBy,
+    graph: parsedOptions.graph ?? config.graph ?? false,
+    graphMetric,
     hosts,
     json: parsedOptions.json ?? false,
-    noCost: parsedOptions.noCost ?? config.noCost ?? false,
+    noCost,
     offline: parsedOptions.offline ?? config.offline ?? true,
     since: parsedOptions.since,
     sshConnectTimeoutSeconds: integer(

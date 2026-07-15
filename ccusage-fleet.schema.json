@@ -26,6 +26,8 @@
     },
     "timezone": { "type": "string" },
     "groupBy": { "enum": ["agent", "device", "none"] },
+    "graph": { "type": "boolean" },
+    "graphMetric": { "enum": ["tokens", "cost"] },
     "byHost": { "type": "boolean" },
     "offline": { "type": "boolean" },
     "noCost": { "type": "boolean" },
