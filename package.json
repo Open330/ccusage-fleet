@@ -1,0 +1,45 @@
+{
+  "name": "ccusage-fleet",
+  "version": "0.1.0",
+  "description": "Aggregate ccusage reports across local and SSH-connected machines",
+  "type": "module",
+  "bin": {
+    "ccusage-fleet": "bin/ccusage-fleet.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "ccusage-fleet.schema.json",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test",
+    "check": "node --check bin/ccusage-fleet.js && node --check src/*.js",
+    "prepublishOnly": "npm run check && npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/open330/ccusage-fleet.git"
+  },
+  "bugs": {
+    "url": "https://github.com/open330/ccusage-fleet/issues"
+  },
+  "homepage": "https://github.com/open330/ccusage-fleet#readme",
+  "keywords": [
+    "ccusage",
+    "claude-code",
+    "codex",
+    "usage",
+    "ssh",
+    "fleet"
+  ],
+  "author": "Open330",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "ccusage": "20.0.17"
+  }
+}

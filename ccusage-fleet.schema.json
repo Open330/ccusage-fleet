@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/open330/ccusage-fleet/main/ccusage-fleet.schema.json",
+  "title": "ccusage-fleet configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "hosts": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          { "type": "string" },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "type"],
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "enum": ["local", "ssh"] },
+              "target": { "type": "string" }
+            }
+          }
+        ]
+      }
+    },
+    "timezone": { "type": "string" },
+    "byHost": { "type": "boolean" },
+    "offline": { "type": "boolean" },
+    "noCost": { "type": "boolean" },
+    "strict": { "type": "boolean" },
+    "timeoutMs": { "type": "integer", "minimum": 1000 },
+    "concurrency": { "type": "integer", "minimum": 1, "maximum": 32 },
+    "sshConnectTimeoutSeconds": { "type": "integer", "minimum": 1 },
+    "ccusageVersion": { "type": "string" }
+  }
+}
