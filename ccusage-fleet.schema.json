@@ -25,6 +25,7 @@
       }
     },
     "timezone": { "type": "string" },
+    "groupBy": { "enum": ["agent", "device", "none"] },
     "byHost": { "type": "boolean" },
     "offline": { "type": "boolean" },
     "noCost": { "type": "boolean" },

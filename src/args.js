@@ -9,6 +9,7 @@ const VALUE_OPTIONS = new Map([
   ['--concurrency', 'concurrency'],
   ['--ssh-connect-timeout', 'sshConnectTimeoutSeconds'],
   ['--ccusage-version', 'ccusageVersion'],
+  ['--group-by', 'groupBy'],
 ]);
 
 const BOOLEAN_OPTIONS = new Map([
@@ -51,8 +52,8 @@ export function parseArgs(argv) {
       if (command != null) {
         throw new Error(`Unexpected argument '${argument}'`);
       }
-      if (argument !== 'daily') {
-        throw new Error(`Unsupported report '${argument}'. ccusage-fleet currently supports daily.`);
+      if (!['daily', 'weekly', 'monthly'].includes(argument)) {
+        throw new Error(`Unsupported report '${argument}'. Choose daily, weekly, or monthly.`);
       }
       command = argument;
       continue;
@@ -88,7 +89,7 @@ export function helpText() {
   return `ccusage-fleet - aggregate ccusage across local and SSH hosts
 
 USAGE
-  ccusage-fleet [daily] [options]
+  ccusage-fleet [daily|weekly|monthly] [options]
 
 HOSTS
   --hosts <list>               Comma-separated hosts; local or localhost means this machine
@@ -100,7 +101,8 @@ REPORT
   --until <YYYY-MM-DD>         Include usage on or before this date
   --timezone <IANA>            Use one timezone on every host
   --json                       Emit machine-readable fleet JSON
-  --by-host / --no-by-host     Show or hide device rows (default: show)
+  --group-by <mode>            Group detail rows by agent, device, or none (default: agent)
+  --by-host / --no-by-host     Compatibility aliases for --group-by device/none
   --no-cost                    Hide costs
   --offline / --online         Use bundled or online ccusage pricing (default: offline)
 
@@ -117,6 +119,8 @@ EXECUTION
 
 EXAMPLES
   npx ccusage-fleet daily --hosts localhost,rtzr,jiun-mbp,jiun-mini
+  npx ccusage-fleet weekly --hosts localhost,server --group-by agent
+  npx ccusage-fleet monthly --hosts localhost,server --group-by device
   CCUSAGE_FLEET_HOSTS=localhost,server npx ccusage-fleet daily --json
 `;
 }

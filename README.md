@@ -1,6 +1,6 @@
 # ccusage-fleet
 
-Run [ccusage](https://github.com/ccusage/ccusage) on local and SSH-connected machines, then aggregate the usage reports into one daily view.
+Run [ccusage](https://github.com/ccusage/ccusage) on local and SSH-connected machines, then aggregate daily, weekly, or monthly usage reports into one view.
 
 ```bash
 npx ccusage-fleet daily --hosts localhost,rtzr,jiun-mbp,jiun-mini
@@ -24,6 +24,19 @@ npx ccusage-fleet daily --hosts localhost,rtzr,jiun-mbp,jiun-mini
 
 # Machine-readable output
 npx ccusage-fleet daily --hosts localhost,rtzr --json
+
+# Weekly and monthly reports use the same options
+npx ccusage-fleet weekly --hosts localhost,rtzr --group-by agent
+npx ccusage-fleet monthly --hosts localhost,rtzr --group-by device
+
+# Default: date -> agent -> models
+npx ccusage-fleet daily --hosts localhost,rtzr --group-by agent
+
+# Date -> device -> models
+npx ccusage-fleet daily --hosts localhost,rtzr --group-by device
+
+# Date totals only
+npx ccusage-fleet daily --hosts localhost,rtzr --group-by none
 
 # One consistent date range and timezone on every device
 npx ccusage-fleet daily \
@@ -52,6 +65,7 @@ Create `ccusage-fleet.config.json`, `.ccusage-fleet.json`, or `~/.config/ccusage
     { "name": "jiun-mini", "type": "ssh", "target": "jiun-mini" }
   ],
   "timezone": "Asia/Seoul",
+  "groupBy": "agent",
   "concurrency": 4,
   "timeoutMs": 120000
 }
@@ -64,6 +78,18 @@ Named entries let the displayed device name differ from its SSH target:
 ```
 
 Command-line hosts override configured hosts. Repeated `--host` options are also supported.
+
+## Grouping
+
+The default table follows ccusage's report shape: one `All` row per date, followed by agent rows and their models, and a final `Total` row.
+
+| Option | Detail rows |
+| --- | --- |
+| `--group-by agent` | Claude, Codex, and other detected agents aggregated across devices |
+| `--group-by device` | One row per local or SSH device |
+| `--group-by none` | Date totals without detail rows |
+
+The former `--by-host` and `--no-by-host` options remain as aliases for `--group-by device` and `--group-by none`. Set `CCUSAGE_FLEET_GROUP_BY` to choose a default without a config file.
 
 ## Failure handling
 

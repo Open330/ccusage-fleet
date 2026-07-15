@@ -80,10 +80,10 @@ export function mergeUsage(target, source, includeAgents = true) {
   return target;
 }
 
-function aggregateRows(reports) {
+function aggregateRows(reports, command) {
   const byPeriod = new Map();
   for (const { report } of reports) {
-    for (const row of report.daily) {
+    for (const row of report[command]) {
       const period = String(row.period ?? row.date ?? 'unknown');
       let target = byPeriod.get(period);
       if (target == null) {
@@ -107,18 +107,19 @@ function totalsFromRows(rows) {
 
 export function aggregateFleet(results, settings) {
   const successful = results.filter((result) => result.status === 'ok');
-  const daily = aggregateRows(successful);
+  const rows = aggregateRows(successful, settings.command);
   const byHost = successful.map((result) => ({
-    daily: result.report.daily,
+    [settings.command]: result.report[settings.command],
     host: result.host.name,
-    totals: result.report.totals ?? totalsFromRows(result.report.daily),
+    totals: result.report.totals ?? totalsFromRows(result.report[settings.command]),
   }));
   return {
     byHost,
     ccusageVersion: settings.ccusageVersion,
-    command: 'daily',
-    daily,
+    command: settings.command,
+    [settings.command]: rows,
     generatedAt: new Date().toISOString(),
+    groupBy: settings.groupBy,
     hosts: results.map((result) => ({
       durationMs: result.durationMs,
       error: result.error,
@@ -129,6 +130,6 @@ export function aggregateFleet(results, settings) {
     })),
     schemaVersion: 1,
     timezone: settings.timezone,
-    totals: totalsFromRows(daily),
+    totals: totalsFromRows(rows),
   };
 }

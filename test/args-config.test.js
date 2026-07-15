@@ -24,6 +24,31 @@ test('supports named SSH config targets', () => {
   });
 });
 
+test('defaults to agent grouping and supports device grouping', () => {
+  const defaultsToAgent = resolveSettings(parseArgs([]).options, {}, defaults);
+  assert.equal(defaultsToAgent.groupBy, 'agent');
+
+  const device = resolveSettings(parseArgs(['--group-by', 'device']).options, {}, defaults);
+  assert.equal(device.groupBy, 'device');
+
+  const compatible = resolveSettings(parseArgs(['--by-host']).options, {}, defaults);
+  assert.equal(compatible.groupBy, 'device');
+
+  const cliCompatibilityWins = resolveSettings(
+    parseArgs(['--by-host']).options,
+    { groupBy: 'agent' },
+    defaults,
+  );
+  assert.equal(cliCompatibilityWins.groupBy, 'device');
+});
+
+test('rejects an unknown grouping', () => {
+  assert.throws(
+    () => resolveSettings(parseArgs(['--group-by', 'project']).options, {}, defaults),
+    /group-by must be agent, device, or none/,
+  );
+});
+
 test('rejects SSH option and shell injection', () => {
   assert.throws(() => validateSshTarget('-oProxyCommand=bad'), /Invalid SSH target/);
   assert.throws(() => validateSshTarget('host;touch /tmp/pwned'), /Invalid SSH target/);
