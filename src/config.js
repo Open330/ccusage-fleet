@@ -124,12 +124,32 @@ export function resolveSettings(parsedOptions, config, defaults) {
     throw new Error(`Invalid timezone '${timezone}'`);
   }
 
+  const cliCompatibilityGroup = parsedOptions.byHost === true
+    ? 'device'
+    : parsedOptions.byHost === false
+      ? 'none'
+      : undefined;
+  const configCompatibilityGroup = config.byHost === true
+    ? 'device'
+    : config.byHost === false
+      ? 'none'
+      : undefined;
+  const groupBy = parsedOptions.groupBy
+    ?? cliCompatibilityGroup
+    ?? process.env.CCUSAGE_FLEET_GROUP_BY
+    ?? config.groupBy
+    ?? configCompatibilityGroup
+    ?? 'agent';
+  if (!['agent', 'device', 'none'].includes(groupBy)) {
+    throw new Error(`group-by must be agent, device, or none (received '${groupBy}')`);
+  }
+
   return {
-    byHost: parsedOptions.byHost ?? config.byHost ?? true,
     ccusageVersion: parsedOptions.ccusageVersion ?? config.ccusageVersion ?? defaults.ccusageVersion,
     concurrency: integer(parsedOptions.concurrency ?? config.concurrency, 'concurrency', 4, 1, 32),
     debug: parsedOptions.debug ?? false,
     dryRun: parsedOptions.dryRun ?? false,
+    groupBy,
     hosts,
     json: parsedOptions.json ?? false,
     noCost: parsedOptions.noCost ?? config.noCost ?? false,

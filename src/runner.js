@@ -9,7 +9,7 @@ export function shellQuote(value) {
 }
 
 export function buildCcusageArgs(settings) {
-  const args = ['daily', '--json', '--by-agent', '--no-color', '--timezone', settings.timezone];
+  const args = [settings.command, '--json', '--by-agent', '--no-color', '--timezone', settings.timezone];
   if (settings.since) {
     args.push('--since', settings.since);
   }
@@ -119,7 +119,7 @@ export function spawnCapture(command, args, timeoutMs) {
   });
 }
 
-function parseReport(stdout) {
+function parseReport(stdout, command) {
   const trimmed = stdout.trim();
   if (!trimmed) {
     throw new Error('ccusage returned no JSON');
@@ -129,8 +129,8 @@ function parseReport(stdout) {
     const lastBrace = trimmed.lastIndexOf('}');
     const json = firstBrace >= 0 && lastBrace >= firstBrace ? trimmed.slice(firstBrace, lastBrace + 1) : trimmed;
     const report = JSON.parse(json);
-    if (!Array.isArray(report.daily)) {
-      throw new Error('missing daily array');
+    if (!Array.isArray(report[command])) {
+      throw new Error(`missing ${command} array`);
     }
     return report;
   } catch (error) {
@@ -154,7 +154,7 @@ export async function runHost(host, settings, spawnFn = spawnCapture) {
       durationMs: result.durationMs,
       host,
       invocation,
-      report: parseReport(result.stdout),
+      report: parseReport(result.stdout, settings.command),
       status: 'ok',
       stderr: result.stderr.trim(),
     };

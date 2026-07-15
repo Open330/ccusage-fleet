@@ -28,16 +28,12 @@ export async function runCli(argv, dependencies = {}) {
     process.stdout.write(`${packageJson.version}\n`);
     return 0;
   }
-  if (command !== 'daily') {
-    throw new Error(`Unsupported command '${command}'`);
-  }
-
   const configPath = discoverConfigPath(options.config);
   const config = loadConfig(configPath);
-  const settings = resolveSettings(options, config, {
+  const settings = { ...resolveSettings(options, config, {
     ccusageVersion: packageJson.dependencies.ccusage,
     timezone: DEFAULT_TIMEZONE,
-  });
+  }), command };
   debug(settings, `timezone=${settings.timezone} hosts=${settings.hosts.map((host) => host.name).join(',')}`);
   if (configPath) debug(settings, `config=${configPath}`);
 
