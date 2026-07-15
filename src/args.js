@@ -10,6 +10,7 @@ const VALUE_OPTIONS = new Map([
   ['--ssh-connect-timeout', 'sshConnectTimeoutSeconds'],
   ['--ccusage-version', 'ccusageVersion'],
   ['--group-by', 'groupBy'],
+  ['--graph-metric', 'graphMetric'],
 ]);
 
 const BOOLEAN_OPTIONS = new Map([
@@ -22,6 +23,8 @@ const BOOLEAN_OPTIONS = new Map([
   ['--no-cost', ['noCost', true]],
   ['--debug', ['debug', true]],
   ['--dry-run', ['dryRun', true]],
+  ['--graph', ['graph', true]],
+  ['--no-graph', ['graph', false]],
   ['--help', ['help', true]],
   ['-h', ['help', true]],
   ['--version', ['version', true]],
@@ -103,6 +106,8 @@ REPORT
   --json                       Emit machine-readable fleet JSON
   --group-by <mode>            Group detail rows by agent, device, or none (default: agent)
   --by-host / --no-by-host     Compatibility aliases for --group-by device/none
+  --graph / --no-graph         Show a report-bucket distribution graph
+  --graph-metric <metric>      Scale graph bars by tokens or cost (default: tokens)
   --no-cost                    Hide costs
   --offline / --online         Use bundled or online ccusage pricing (default: offline)
 

@@ -38,6 +38,12 @@ npx ccusage-fleet daily --hosts localhost,rtzr --group-by device
 # Date totals only
 npx ccusage-fleet daily --hosts localhost,rtzr --group-by none
 
+# Append a report-bucket token distribution graph
+npx ccusage-fleet daily --hosts localhost,rtzr --graph
+
+# Scale the graph by estimated cost
+npx ccusage-fleet daily --hosts localhost,rtzr --graph --graph-metric cost
+
 # One consistent date range and timezone on every device
 npx ccusage-fleet daily \
   --hosts localhost,rtzr \
@@ -66,6 +72,8 @@ Create `ccusage-fleet.config.json`, `.ccusage-fleet.json`, or `~/.config/ccusage
   ],
   "timezone": "Asia/Seoul",
   "groupBy": "agent",
+  "graph": false,
+  "graphMetric": "tokens",
   "concurrency": 4,
   "timeoutMs": 120000
 }
@@ -90,6 +98,12 @@ The default table follows ccusage's report shape: one `All` row per date, follow
 | `--group-by none` | Date totals without detail rows |
 
 The former `--by-host` and `--no-by-host` options remain as aliases for `--group-by device` and `--group-by none`. Set `CCUSAGE_FLEET_GROUP_BY` to choose a default without a config file.
+
+## Graph
+
+Add `--graph` to append a proportional distribution chart after the table. Bars use total tokens by default; choose `--graph-metric cost` to scale them by estimated cost. Buckets follow the report command: days for `daily`, weeks for `weekly`, and months for `monthly`.
+
+Hour buckets will require a future normalized event export from ccusage; ccusage-fleet does not copy raw transcripts to approximate them.
 
 ## Failure handling
 
