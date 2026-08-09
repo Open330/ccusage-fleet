@@ -40,6 +40,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "ccusage": "20.0.17"
+    "ccusage": "20.0.19"
   }
 }

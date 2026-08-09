@@ -107,9 +107,9 @@ REPORT
   --group-by <mode>            Group detail rows by agent, device, or none (default: agent)
   --by-host / --no-by-host     Compatibility aliases for --group-by device/none
   --graph / --no-graph         Show a report-bucket distribution graph
-  --graph-metric <metric>      Scale graph bars by tokens or cost (default: tokens)
+  --graph-metric <metric>      Scale graph bars by tokens, output, or cost (default: tokens)
   --no-cost                    Hide costs
-  --offline / --online         Use bundled or online ccusage pricing (default: offline)
+  --offline / --online         Use bundled or online ccusage pricing (default: online)
 
 EXECUTION
   --timeout <ms>               Per-host timeout (default: 120000)
