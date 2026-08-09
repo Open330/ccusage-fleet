@@ -56,10 +56,25 @@ test('configures token and cost graphs', () => {
 
   const cost = resolveSettings(parseArgs(['--graph', '--graph-metric', 'cost']).options, {}, defaults);
   assert.equal(cost.graphMetric, 'cost');
+
+  const outputTokens = resolveSettings(parseArgs(['--graph', '--graph-metric', 'output']).options, {}, defaults);
+  assert.equal(outputTokens.graphMetric, 'output');
+
   assert.throws(
     () => resolveSettings(parseArgs(['--graph-metric', 'cost', '--no-cost']).options, {}, defaults),
     /cannot be combined with --no-cost/,
   );
+  assert.throws(
+    () => resolveSettings(parseArgs(['--graph-metric', 'reads']).options, {}, defaults),
+    /graph-metric must be tokens, output, or cost/,
+  );
+});
+
+test('fetches pricing online by default so new models are not counted as $0', () => {
+  assert.equal(resolveSettings(parseArgs([]).options, {}, defaults).offline, false);
+  assert.equal(resolveSettings(parseArgs(['--offline']).options, {}, defaults).offline, true);
+  assert.equal(resolveSettings(parseArgs([]).options, { offline: true }, defaults).offline, true);
+  assert.equal(resolveSettings(parseArgs(['--online']).options, { offline: true }, defaults).offline, false);
 });
 
 test('rejects SSH option and shell injection', () => {

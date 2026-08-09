@@ -144,8 +144,8 @@ export function resolveSettings(parsedOptions, config, defaults) {
     throw new Error(`group-by must be agent, device, or none (received '${groupBy}')`);
   }
   const graphMetric = parsedOptions.graphMetric ?? config.graphMetric ?? 'tokens';
-  if (!['tokens', 'cost'].includes(graphMetric)) {
-    throw new Error(`graph-metric must be tokens or cost (received '${graphMetric}')`);
+  if (!['tokens', 'output', 'cost'].includes(graphMetric)) {
+    throw new Error(`graph-metric must be tokens, output, or cost (received '${graphMetric}')`);
   }
   const noCost = parsedOptions.noCost ?? config.noCost ?? false;
   if (graphMetric === 'cost' && noCost) {
@@ -163,7 +163,7 @@ export function resolveSettings(parsedOptions, config, defaults) {
     hosts,
     json: parsedOptions.json ?? false,
     noCost,
-    offline: parsedOptions.offline ?? config.offline ?? true,
+    offline: parsedOptions.offline ?? config.offline ?? false,
     since: parsedOptions.since,
     sshConnectTimeoutSeconds: integer(
       parsedOptions.sshConnectTimeoutSeconds ?? config.sshConnectTimeoutSeconds,

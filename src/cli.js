@@ -8,6 +8,7 @@ import { discoverConfigPath, loadConfig, resolveSettings } from './config.js';
 import { mapConcurrent, runHost } from './runner.js';
 import { renderFleetTable } from './table.js';
 import { renderFleetGraph } from './graph.js';
+import { fleetNotes, renderNotes } from './insights.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const packageJson = JSON.parse(readFileSync(resolve(here, '..', 'package.json'), 'utf8'));
@@ -60,10 +61,14 @@ export async function runCli(argv, dependencies = {}) {
   }
 
   const fleet = aggregateFleet(results, settings);
+  const notes = fleetNotes(fleet, settings);
   if (settings.json) {
-    process.stdout.write(`${JSON.stringify(fleet, null, 2)}\n`);
+    process.stdout.write(`${JSON.stringify({ ...fleet, notes }, null, 2)}\n`);
   } else {
     const sections = [renderFleetTable(fleet, settings)];
+    if (notes.length > 0) {
+      sections.push(renderNotes(notes));
+    }
     if (settings.graph) {
       sections.push(renderFleetGraph(fleet, settings));
     }
